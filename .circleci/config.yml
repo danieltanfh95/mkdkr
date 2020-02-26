@@ -1,19 +1,34 @@
 version: 2.1
 jobs:
-  build:
-    machine:
-      image: ubuntu-1604:201903-01
+  lint:
+    docker:
+      - image: rosiney/mkdkr
+    parallelism: 2
     steps:
     - checkout
+    - setup_remote_docker
     - run:
         name: lint commit
         command: make lint.commit
     - run:
         name: lint shellcheck
         command: make lint.shellcheck
+  test:
+    docker:
+      - image: rosiney/mkdkr
+    steps:
+    - checkout
+    - setup_remote_docker
     - run:
         name: test unit
         command: make test.unit
+  build:
+    docker:
+      - image: rosiney/mkdkr
+    parallelism: 4
+    steps:
+    - checkout
+    - setup_remote_docker
     - run:
         name: examples simple
         command: make examples.simple
